@@ -5,52 +5,6 @@
         </h2>
     </x-slot>
 
-    @php
-        $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
-        $dosenList = $jadwals->pluck('dosen')->unique()->filter()->values();
-        $mataKuliahList = $jadwals->pluck('mata_kuliah')->unique()->filter()->values();
-
-        $filterHari = request('hari');
-        $filterDosen = request('dosen');
-        $filterMataKuliah = request('mata_kuliah');
-
-        $filteredJadwals = $jadwals->filter(function ($jadwal) use ($filterHari, $filterDosen, $filterMataKuliah) {
-            return (!$filterHari || $jadwal->hari === $filterHari)
-                && (!$filterDosen || $jadwal->dosen === $filterDosen)
-                && (!$filterMataKuliah || $jadwal->mata_kuliah === $filterMataKuliah);
-        });
-
-        // Compute schedule time range
-        $earliestStart = $filteredJadwals->min('jam_mulai');
-        $latestEnd = $filteredJadwals->max('jam_selesai');
-
-        $startTimestamp = strtotime(date('H:00:00', strtotime($earliestStart)));
-        $endHour = (int) date('H', strtotime($latestEnd));
-        if ((int) date('i', strtotime($latestEnd)) > 0) $endHour++;
-        $endTimestamp = strtotime(sprintf('%02d:00:00', $endHour));
-
-        $intervalMinutes = 10;
-        $timeSlots = [];
-        for ($time = $startTimestamp; $time <= $endTimestamp; $time += $intervalMinutes * 60) {
-            $timeSlots[] = date('H:i:s', $time);
-        }
-
-        $wholeHourSlots = array_values(array_filter($timeSlots, fn($t) => substr($t, 3, 2) === '00'));
-
-        function timeToMinutes($time) {
-            [$h, $m] = explode(':', $time);
-            return (int)$h * 60 + (int)$m;
-        }
-
-        function slotSpan($start, $end, $interval = 10) {
-            return max(1, intval(round((timeToMinutes($end) - timeToMinutes($start)) / $interval)));
-        }
-
-        function roundDownToHour($time) {
-            return date('H:00:00', strtotime($time));
-        }
-    @endphp
-
     <style>
         .jadwal-cell {
             @apply bg-gradient-to-br from-blue-100 to-blue-50 text-blue-900 rounded-md shadow-sm p-2 text-sm flex flex-col justify-between h-full;
@@ -68,7 +22,7 @@
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- FILTERS -->
+            <!-- Filters -->
             <form method="GET" class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                     <label for="hari" class="block text-sm font-medium text-gray-700">Hari</label>
@@ -107,7 +61,7 @@
                 </div>
             </form>
 
-            <!-- SCHEDULE TABLE -->
+            <!-- Schedule Table -->
             <div class="schedule-container rounded-lg border border-gray-300 shadow-sm">
                 <table class="min-w-full table-fixed border-collapse border border-gray-300">
                     <thead class="bg-blue-600 text-white">
@@ -125,7 +79,9 @@
                     <tbody>
                         @php
                             $skipSlots = [];
-                            foreach ($days as $day) $skipSlots[$day] = [];
+                            foreach ($days as $day) {
+                                $skipSlots[$day] = [];
+                            }
                         @endphp
 
                         @foreach ($wholeHourSlots as $hourIndex => $slot)
@@ -140,13 +96,15 @@
                                     @endif
 
                                     @php
-                                        $jadwalAtSlot = $filteredJadwals->first(fn($j) => $j->hari === $day && roundDownToHour($j->jam_mulai) === $slot);
+                                        $jadwalAtSlot = $filteredJadwals->first(fn($j) => $j->hari === $day && $roundDownToHour($j->jam_mulai) === $slot);
                                     @endphp
 
                                     @if ($jadwalAtSlot)
                                         @php
-                                            $span = max(1, ceil(slotSpan($jadwalAtSlot->jam_mulai, $jadwalAtSlot->jam_selesai) * $intervalMinutes / 60));
-                                            for ($i = 1; $i < $span; $i++) $skipSlots[$day][] = $hourIndex + $i;
+                                            $span = max(1, ceil($slotSpan($jadwalAtSlot->jam_mulai, $jadwalAtSlot->jam_selesai) * $intervalMinutes / 60));
+                                            for ($i = 1; $i < $span; $i++) {
+                                                $skipSlots[$day][] = $hourIndex + $i;
+                                            }
                                         @endphp
                                         <td rowspan="{{ $span }}" class="border border-blue-300 align-top h-[72px] jadwal-cell">
                                             <div class="font-semibold truncate">{{ $jadwalAtSlot->mata_kuliah }}</div>

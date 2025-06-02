@@ -5,40 +5,139 @@ namespace App\Http\Controllers;
 use App\Models\Jadwal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Carbon;
 
 class JadwalController extends Controller
 {
     public function dashboard()
     {
         $userId = Auth::id();
-        $jadwals = Jadwal::where('user_id', $userId)->get();
+        $jadwals = Auth::check()
+            ? Jadwal::where('user_id', Auth::id())->get()
+            : collect();
 
+
+        // Summary cards
         $totalMataKuliah = $jadwals->pluck('mata_kuliah')->unique()->count();
         $totalDosen = $jadwals->pluck('dosen')->unique()->count();
         $totalJadwal = $jadwals->count();
         $totalRuangan = $jadwals->pluck('ruangan')->unique()->count();
 
-        return view('dashboard', compact(
-            'jadwals',
+        // Today’s info
+        $now = Carbon::now()->locale('id');
+        $todayName = ucfirst($now->translatedFormat('l')); // e.g., 'Senin'
+        $todayTime = $now->format('H:i');
+
+        $todayClasses = $jadwals->where('hari', $todayName);
+
+        $nextClass = $todayClasses
+            ->filter(fn ($jadwal) => $jadwal->jam_mulai > $todayTime)
+            ->sortBy('jam_mulai')
+            ->first();
+
+        // Weekly load: count by day
+        $weekDays = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+        $weeklyLoad = collect($weekDays)->mapWithKeys(function ($day) use ($jadwals) {
+            return [$day => $jadwals->where('hari', $day)->count()];
+        });
+
+        return view('jadwal.dashboard', compact(
             'totalMataKuliah',
             'totalDosen',
             'totalJadwal',
-            'totalRuangan'
+            'totalRuangan',
+            'todayClasses',
+            'nextClass',
+            'weeklyLoad',
+            'todayName'
         ));
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $jadwals = Jadwal::where('user_id', Auth::id())->get();
-        return view('jadwal.index', compact('jadwals'));
+        $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+        $jadwals = Auth::check()
+            ? Jadwal::where('user_id', Auth::id())->get()
+            : collect();
+
+
+        $filterHari = $request->input('hari');
+        $filterDosen = $request->input('dosen');
+        $filterMataKuliah = $request->input('mata_kuliah');
+
+        // Filter jadwals based on request input
+        $filteredJadwals = $jadwals->filter(function ($jadwal) use ($filterHari, $filterDosen, $filterMataKuliah) {
+            return (!$filterHari || $jadwal->hari === $filterHari)
+                && (!$filterDosen || $jadwal->dosen === $filterDosen)
+                && (!$filterMataKuliah || $jadwal->mata_kuliah === $filterMataKuliah);
+        });
+
+        // Extract unique dosen and mata kuliah lists for filters
+        $dosenList = $jadwals->pluck('dosen')->unique()->filter()->values();
+        $mataKuliahList = $jadwals->pluck('mata_kuliah')->unique()->filter()->values();
+
+        // Time helpers
+        $intervalMinutes = 15;
+
+        // Compute schedule time range
+        $earliestStart = $filteredJadwals->min('jam_mulai');
+        $latestEnd = $filteredJadwals->max('jam_selesai');
+
+        if (!$earliestStart || !$latestEnd) {
+            // No schedules available, default times
+            $earliestStart = '07:00:00';
+            $latestEnd = '17:00:00';
+        }
+
+        $startTimestamp = strtotime(date('H:00:00', strtotime($earliestStart)));
+        $endHour = (int) date('H', strtotime($latestEnd));
+        if ((int) date('i', strtotime($latestEnd)) > 0) {
+            $endHour++;
+        }
+        $endTimestamp = strtotime(sprintf('%02d:00:00', $endHour));
+
+        // Generate time slots (every 15 minutes)
+        $timeSlots = [];
+        for ($time = $startTimestamp; $time <= $endTimestamp; $time += $intervalMinutes * 60) {
+            $timeSlots[] = date('H:i:s', $time);
+        }
+
+        // Only whole hour slots for table rows
+        $wholeHourSlots = array_values(array_filter($timeSlots, fn($t) => substr($t, 3, 2) === '00'));
+
+        // Helper functions
+        $timeToMinutes = function ($time) {
+            [$h, $m] = explode(':', $time);
+            return (int)$h * 60 + (int)$m;
+        };
+
+        $slotSpan = function ($start, $end, $interval = 10) use ($timeToMinutes) {
+            return max(1, intval(round(($timeToMinutes($end) - $timeToMinutes($start)) / $interval)));
+        };
+
+        $roundDownToHour = function ($time) {
+            return date('H:00:00', strtotime($time));
+        };
+
+        return view('jadwal.index', compact(
+            'days',
+            'dosenList',
+            'mataKuliahList',
+            'filterHari',
+            'filterDosen',
+            'filterMataKuliah',
+            'filteredJadwals',
+            'wholeHourSlots',
+            'slotSpan',
+            'roundDownToHour',
+            'intervalMinutes'
+        ));
     }
 
     public function create()
     {
-        $jadwals = Jadwal::where('user_id', Auth::id())->get();
-        return view('jadwal.create', compact('jadwals'));
+        return view('jadwal.create');
     }
-
 
     public function store(Request $request)
     {
@@ -61,7 +160,7 @@ class JadwalController extends Controller
             'user_id' => Auth::id(),
         ]);
 
-        return redirect()->route('jadwal.index')->with('success', 'Jadwal created successfully.');
+        return redirect()->route('jadwal.create')->with('success', 'Jadwal created successfully.');
     }
 
     public function show(Jadwal $jadwal)
@@ -106,7 +205,7 @@ class JadwalController extends Controller
             'jam_selesai',
         ]));
 
-        return redirect()->route('jadwal.index')->with('success', 'Jadwal updated successfully.');
+        return redirect()->route('jadwal.create')->with('success', 'Jadwal updated successfully.');
     }
 
     public function destroy(Jadwal $jadwal)
@@ -116,6 +215,7 @@ class JadwalController extends Controller
         }
 
         $jadwal->delete();
-        return redirect()->route('jadwal.index')->with('success', 'Jadwal deleted successfully.');
+        return redirect()->route('jadwal.create')->with('success', 'Jadwal deleted successfully.');
     }
 }
+

@@ -6,6 +6,6 @@
     </x-slot>
 
     <div class="p-6 max-w-xl">
-        @include('jadwal._form', ['jadwal' => $jadwal])
+        @include('jadwal.partials._form', ['jadwal' => $jadwal])
     </div>
 </x-app-layout>

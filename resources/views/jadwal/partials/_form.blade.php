@@ -40,7 +40,7 @@
         <input type="time" name="jam_selesai" class="w-full rounded border border-gray-700 p-2" value="{{ old('jam_selesai', $jadwal->jam_selesai ?? '') }}" required>
     </div>
 
-    <div>
+    <div class="flex justify-end">
         <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
             {{ isset($jadwal) ? 'Update' : 'Simpan' }}
         </button>
