@@ -1,73 +1,63 @@
 <x-app-layout>
-    {{-- <div class="hidden sm:flex sm:items-center absolute top-4 right-4 z-50">
-    <x-dropdown align="right" width="48">
-        <x-slot name="trigger">
-            <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                <div>{{ Auth::user()->name }}</div>
-
-                <div class="ms-1">
-                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
-                </div>
-            </button>
-        </x-slot>
-
-        <x-slot name="content">
-            <x-dropdown-link :href="route('profile.edit')">
-                {{ __('Profile') }}
-            </x-dropdown-link>
-
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-
-                <x-dropdown-link :href="route('logout')"
-                        onclick="event.preventDefault();
-                                    this.closest('form').submit();">
-                    {{ __('Log Out') }}
-                </x-dropdown-link>
-            </form>
-        </x-slot>
-    </x-dropdown>
-    </div> --}}
-
-
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2>
     </x-slot>
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="mb-6">
-                <h1 class="text-2xl font-bold text-gray-800">Halo, {{ Auth::user()->name }}</h1>
-                <p class="text-gray-600 mt-1">Siap-siap ngatur jadwal kuliah minggu ini yuk!</p>
-            </div>
 
+            <h1 class="text-2xl font-bold text-gray-800">Halo, {{ Auth::user()->name }}</h1>
+            <p class="text-gray-600 mt-1 mb-6">Siap-siap ngatur jadwal kuliah minggu ini yuk!</p>
+
+            <!-- Summary Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div class="bg-blue-100 text-center p-6 rounded-lg shadow">
-                    <p class="text-3xl font-extrabold">12</p>
-                    <p class="mt-1 text-gray-700">Jumlah Mata Kuliah</p>
+                <div class="bg-blue-600 text-white text-center p-6 rounded-xl shadow-md">
+                    <p class="text-4xl font-extrabold">{{ $totalMataKuliah }}</p>
+                    <p class="mt-2 text-sm font-medium">Jumlah Mata Kuliah</p>
                 </div>
-                <div class="bg-orange-100 text-center p-6 rounded-lg shadow">
-                    <p class="text-3xl font-extrabold">6</p>
-                    <p class="mt-1 text-gray-700">Jumlah Dosen</p>
+                <div class="bg-orange-500 text-white text-center p-6 rounded-xl shadow-md">
+                    <p class="text-4xl font-extrabold">{{ $totalDosen }}</p>
+                    <p class="mt-2 text-sm font-medium">Jumlah Dosen</p>
                 </div>
-                <div class="bg-green-100 text-center p-6 rounded-lg shadow">
-                    <p class="text-3xl font-extrabold">11</p>
-                    <p class="mt-1 text-gray-700">Jadwal Minggu Ini</p>
+                <div class="bg-green-600 text-white text-center p-6 rounded-xl shadow-md">
+                    <p class="text-4xl font-extrabold">{{ $totalJadwal }}</p>
+                    <p class="mt-2 text-sm font-medium">Jadwal Minggu Ini</p>
                 </div>
-                <div class="bg-pink-100 text-center p-6 rounded-lg shadow">
-                    <p class="text-3xl font-extrabold">5</p>
-                    <p class="mt-1 text-gray-700">Total Ruangan</p>
+                <div class="bg-pink-500 text-white text-center p-6 rounded-xl shadow-md">
+                    <p class="text-4xl font-extrabold">{{ $totalRuangan }}</p>
+                    <p class="mt-2 text-sm font-medium">Total Ruangan</p>
                 </div>
             </div>
 
-            <div class="text-center text-gray-700 text-lg mt-6">
-                Antara kelas dan kasur, <br class="sm:hidden" />
-                kadang pilihan berat~ <span class="inline-block">⭐</span>
-            </div>
+            <!-- Jadwal Table -->
+            @if ($jadwals->isEmpty())
+                <div class="text-gray-500 text-center mt-8 text-lg">Tidak ada jadwal tersedia.</div>
+            @else
+                <div class="overflow-x-auto bg-gray-900 rounded-xl shadow-md mt-6 border border-gray-700">
+                    <table class="w-full table-auto text-left text-sm text-white">
+                        <thead class="bg-gray-700 text-xs uppercase">
+                            <tr>
+                                <th class="px-4 py-3 font-semibold">Mata Kuliah</th>
+                                <th class="px-4 py-3 font-semibold">Dosen</th>
+                                <th class="px-4 py-3 font-semibold">Hari</th>
+                                <th class="px-4 py-3 font-semibold">Jam</th>
+                                <th class="px-4 py-3 font-semibold">Ruangan</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-700">
+                            @foreach ($jadwals as $jadwal)
+                                <tr class="hover:bg-gray-700 transition-colors">
+                                    <td class="px-4 py-3">{{ $jadwal->mata_kuliah }}</td>
+                                    <td class="px-4 py-3">{{ $jadwal->dosen }}</td>
+                                    <td class="px-4 py-3">{{ $jadwal->hari }}</td>
+                                    <td class="px-4 py-3">{{ $jadwal->jam_mulai }} - {{ $jadwal->jam_selesai }}</td>
+                                    <td class="px-4 py-3">{{ $jadwal->ruangan }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
         </div>
     </div>
 </x-app-layout>

@@ -19,8 +19,16 @@
 
     <div>
         <label class="block text-sm mb-1">Hari</label>
-        <input type="text" name="hari" class="w-full rounded border border-gray-700 p-2" value="{{ old('hari', $jadwal->hari ?? '') }}" required>
+        <select name="hari" class="w-full rounded border border-gray-700 p-2" required>
+            @php
+                $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+            @endphp
+            @foreach ($days as $day)
+                <option value="{{ $day }}" {{ old('hari', $jadwal->hari ?? '') === $day ? 'selected' : '' }}>{{ $day }}</option>
+            @endforeach
+        </select>
     </div>
+
 
     <div>
         <label class="block text-sm mb-1">Jam Mulai</label>
@@ -33,7 +41,7 @@
     </div>
 
     <div>
-        <button type="submit" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded">
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
             {{ isset($jadwal) ? 'Update' : 'Simpan' }}
         </button>
     </div>
