@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\UsersController;
 use App\Http\Middleware\IsAdmin;
 use Illuminate\Support\Facades\Route;
 
@@ -20,10 +21,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(IsAdmin::class)->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-    Route::get('/manage-users', function () {
-        return view('admin.manage-users');
-    })->name('manage-users');
+    Route::resource('manage-users', UsersController::class)->except(['show']);
 });
 
 require __DIR__.'/auth.php';

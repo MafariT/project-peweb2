@@ -1,60 +1,79 @@
 <x-sidebar-admin-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl leading-tight">
             {{ __('Dashboard Admin') }}
         </h2>
     </x-slot>
 
-    <div class="py-6 px-4">
-        <div class="mb-6">
-            <h3 class="text-lg font-medium text-gray-900">
-                Welcome back, {{ Auth::user()->name }}!
-            </h3>
-            <p class="text-sm text-gray-600">
-                Here’s what’s happening today.
-            </p>
-        </div>
+    <div class="py-8 px-6 space-y-10 max-w-7xl mx-auto">
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div class="bg-white shadow rounded-lg p-4">
-                <div class="text-sm text-gray-500">Total Users</div>
-                <div class="mt-1 text-2xl font-semibold text-gray-900">{{ $totalUsers }}</div>
+        <!-- Ringkasan Statistik -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-sm uppercase tracking-wide font-semibold mb-2">Total Pengguna</h3>
+                <p class="text-4xl font-extrabold">{{ $totalUsers }}</p>
             </div>
-            <div class="bg-white shadow rounded-lg p-4">
-                <div class="text-sm text-gray-500">Total Admins</div>
-                <div class="mt-1 text-2xl font-semibold text-gray-900">{{ $totalAdmins }}</div>
+
+            <div class="bg-gradient-to-r from-green-600 to-teal-700 text-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-sm uppercase tracking-wide font-semibold mb-2">Total Jadwal Kuliah</h3>
+                <p class="text-4xl font-extrabold">{{ $totalJadwalKuliah }}</p>
             </div>
-            <div class="bg-white shadow rounded-lg p-4">
-                <div class="text-sm text-gray-500">Recent Signups (7 days)</div>
-                <div class="mt-1 text-2xl font-semibold text-gray-900">{{ $recentSignups }}</div>
-            </div>
-            <div class="bg-white shadow rounded-lg p-4">
-                <div class="text-sm text-gray-500">Active Sessions</div>
-                <div class="mt-1 text-2xl font-semibold text-gray-900">{{ $activeSessions }}</div>
+
+            <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-sm uppercase tracking-wide font-semibold mb-2">Pendaftar Pengguna Baru (7 hari terakhir)</h3>
+                <p class="text-4xl font-extrabold">{{ $recentSignups }}</p>
             </div>
         </div>
 
-        <div class="mt-8">
-            <h4 class="text-md font-semibold text-gray-800 mb-2">Recent Signups by Role</h4>
-            <ul class="bg-white shadow rounded-lg divide-y divide-gray-200 mb-8">
-                @foreach ($recentSignupsByRole as $roleStat)
-                    <li class="p-4 text-sm text-gray-700">
-                        Role <strong>{{ $roleStat->role }}</strong>: {{ $roleStat->count }} new users
-                    </li>
-                @endforeach
-            </ul>
-
-            <h4 class="text-md font-semibold text-gray-800 mb-2">Recent User Activity</h4>
-            <ul class="bg-white shadow rounded-lg divide-y divide-gray-200">
+        <!-- Aktivitas Terbaru -->
+        <section class="bg-white rounded-lg shadow-md p-6">
+            <h4 class="text-xl font-semibold mb-4 border-b border-gray-200 pb-2">Aktivitas Terbaru</h4>
+            <ul class="divide-y divide-gray-200 max-h-72 overflow-y-auto">
                 @forelse ($recentActivities as $activity)
-                    <li class="p-4 text-sm text-gray-700">
-                        {{ $activity->description }}
-                        <span class="text-gray-400 text-xs">({{ $activity->created_at->diffForHumans() }})</span>
+                    <li class="py-3 flex justify-between items-center">
+                        <p class="text-gray-800 font-medium">{{ $activity->description }}</p>
+                        <time class="text-gray-400 text-sm whitespace-nowrap">{{ $activity->created_at->diffForHumans() }}</time>
                     </li>
                 @empty
-                    <li class="p-4 text-sm text-gray-700">No recent activity found.</li>
+                    <li class="py-4 text-center text-gray-500 italic">Tidak ada aktivitas terbaru.</li>
                 @endforelse
             </ul>
-        </div>
+        </section>
+
+        <!-- Pengguna Baru Terbaru -->
+        <section class="bg-white rounded-lg shadow-md p-6">
+            <h4 class="text-xl font-semibold mb-4 border-b border-gray-200 pb-2">Pengguna Baru Terbaru (7 hari terakhir)</h4>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 table-auto">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                                Nama
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                                Email
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-center text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                                Total Jadwal
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @forelse ($recentNewUsers as $user)
+                            <tr class="hover:bg-gray-50 transition-colors duration-200">
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-900 font-medium">{{ $user->name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-700">{{ $user->email }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-center text-gray-700 font-semibold">{{ $user->jadwals_count }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="py-6 text-center text-gray-400 italic">Tidak ada pengguna baru dalam 7 hari terakhir.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
     </div>
 </x-sidebar-admin-layout>

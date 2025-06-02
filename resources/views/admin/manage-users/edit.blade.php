@@ -1,7 +1,11 @@
 <x-sidebar-admin-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Manage Users') }}
+            {{ __('Ubah Pengguna') }}
         </h2>
     </x-slot>
+
+    <div class="p-6 max-w-xl">
+        @include('admin.manage-users.partials._form', ['user' => $user])
+    </div>
 </x-sidebar-admin-layout>

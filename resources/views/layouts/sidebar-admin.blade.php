@@ -146,15 +146,15 @@
                 </a>
 
                 <a
-                    href="{{ route('admin.manage-users') }}"
+                    href="{{ route('admin.manage-users.index') }}"
                     class="group flex items-center space-x-2 px-4 py-2 rounded
-                        {{ request()->routeIs('admin.manage-users') ? 'bg-white text-black' : 'hover:opacity-80 text-white' }}"
+                        {{ request()->routeIs('admin.manage-users.index') ? 'bg-white text-black' : 'hover:opacity-80 text-white' }}"
                 >
                     <!-- Users icon -->
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         class="h-5 w-5 transition-colors duration-200
-                            {{ request()->routeIs('admin.manage-users') ? 'text-black' : 'text-white group-hover:text-blue-500' }}"
+                            {{ request()->routeIs('admin.manage-users.index') ? 'text-black' : 'text-white group-hover:text-blue-500' }}"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -163,7 +163,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 4a4 4 0 11-8 0 4 4 0 018 0zM12 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6z" />
                     </svg>
-                    <span>Manage Users</span>
+                    <span>Kelola Pengguna</span>
                 </a>
             </nav>
         </aside>
