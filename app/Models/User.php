@@ -47,6 +47,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
     public function jadwals()
     {
         return $this->hasMany(Jadwal::class);

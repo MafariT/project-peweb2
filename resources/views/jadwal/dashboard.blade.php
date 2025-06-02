@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-sidebar-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl leading-tight">Dashboard</h2>
     </x-slot>
@@ -85,7 +85,7 @@
                     @endforeach
                 </div>
             </div>
-                
+
         </div>
     </div>
-</x-app-layout>
+</x-sidebar-layout>

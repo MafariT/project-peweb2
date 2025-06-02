@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-sidebar-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-2xl text-gray-900 leading-tight">
             {{ __('Jadwal Kuliah') }}
@@ -125,4 +125,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</x-sidebar-layout>

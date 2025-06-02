@@ -14,7 +14,6 @@ class ViewServiceProvider extends ServiceProvider
         // Only pass jadwals to specific views
         View::composer([
             'welcome',
-            'partials.jadwal',
             'jadwal.*',
             'dashboard'
         ], function ($view) {

@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-sidebar-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Edit Jadwal') }}
@@ -8,4 +8,4 @@
     <div class="p-6 max-w-xl">
         @include('jadwal.partials._form', ['jadwal' => $jadwal])
     </div>
-</x-app-layout>
+</x-sidebar-layout>
