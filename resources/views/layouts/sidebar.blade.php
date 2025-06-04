@@ -125,70 +125,111 @@
 
             <!-- Navigation -->
             <nav class="space-y-2 mt-6">
-                <a
-                    href="{{ route('dashboard') }}"
-                    class="group flex items-center space-x-2 px-4 py-2 rounded
-                        {{ request()->routeIs('dashboard') ? 'bg-white text-black' : 'hover:opacity-80 text-white' }}"
-                >
-                    <!-- Home icon -->
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-5 w-5 transition-colors duration-200
-                            {{ request()->routeIs('dashboard') ? 'text-black' : 'text-white group-hover:text-blue-500' }}"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        stroke-width="2"
+                @if (Auth::user()->role === 'admin')
+                    <!-- Admin Navigation -->
+                    <a
+                        href="{{ route('admin.dashboard') }}"
+                        class="group flex items-center space-x-2 px-4 py-2 rounded
+                            {{ request()->routeIs('admin.dashboard') ? 'bg-white text-black' : 'hover:opacity-80 text-white' }}"
                     >
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-9 9 9M9 21v-6h6v6" />
-                    </svg>
-                    <span>Dashboard</span>
-                </a>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5 transition-colors duration-200
+                                {{ request()->routeIs('admin.dashboard') ? 'text-black' : 'text-white group-hover:text-blue-500' }}"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-9 9 9M9 21v-6h6v6" />
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
 
-                <a
-                    href="{{ route('jadwal.index') }}"
-                    class="group flex items-center space-x-2 px-4 py-2 rounded
-                        {{ request()->routeIs('jadwal.index') ? 'bg-white text-black' : 'hover:opacity-80 text-white' }}"
-                >
-                    <!-- Calendar icon -->
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-5 w-5 transition-colors duration-200
-                            {{ request()->routeIs('jadwal.index') ? 'text-black' : 'text-white group-hover:text-blue-500' }}"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        stroke-width="2"
+                    <a
+                        href="{{ route('admin.manage-users.index') }}"
+                        class="group flex items-center space-x-2 px-4 py-2 rounded
+                            {{ request()->routeIs('admin.manage-users.index') ? 'bg-white text-black' : 'hover:opacity-80 text-white' }}"
                     >
-                        <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
-                        <line x1="16" y1="2" x2="16" y2="6" />
-                        <line x1="8" y1="2" x2="8" y2="6" />
-                        <line x1="3" y1="10" x2="21" y2="10" />
-                    </svg>
-                    <span>Jadwal Kuliah</span>
-                </a>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5 transition-colors duration-200
+                                {{ request()->routeIs('admin.manage-users.index') ? 'text-black' : 'text-white group-hover:text-blue-500' }}"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 4a4 4 0 11-8 0 4 4 0 018 0zM12 14a6 6 0 00-6 6v1h12v-1" />
+                        </svg>
+                        <span>Manage Users</span>
+                    </a>
+                @else
+                    <!-- Regular User Navigation -->
+                    <a
+                        href="{{ route('dashboard') }}"
+                        class="group flex items-center space-x-2 px-4 py-2 rounded
+                            {{ request()->routeIs('dashboard') ? 'bg-white text-black' : 'hover:opacity-80 text-white' }}"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5 transition-colors duration-200
+                                {{ request()->routeIs('dashboard') ? 'text-black' : 'text-white group-hover:text-blue-500' }}"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-9 9 9M9 21v-6h6v6" />
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
 
-                <a
-                    href="{{ route('jadwal.create') }}"
-                    class="group flex items-center space-x-2 px-4 py-2 rounded
-                        {{ request()->routeIs('jadwal.create') ? 'bg-white text-black' : 'hover:opacity-80 text-white' }}"
-                >
-                    <!-- Plus icon -->
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-5 w-5 transition-colors duration-200
-                            {{ request()->routeIs('jadwal.create') ? 'text-black' : 'text-white group-hover:text-blue-500' }}"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        stroke-width="2"
+                    <a
+                        href="{{ route('jadwal.index') }}"
+                        class="group flex items-center space-x-2 px-4 py-2 rounded
+                            {{ request()->routeIs('jadwal.index') ? 'bg-white text-black' : 'hover:opacity-80 text-white' }}"
                     >
-                        <line x1="12" y1="5" x2="12" y2="19" />
-                        <line x1="5" y1="12" x2="19" y2="12" />
-                    </svg>
-                    <span>Tambah Jadwal</span>
-                </a>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5 transition-colors duration-200
+                                {{ request()->routeIs('jadwal.index') ? 'text-black' : 'text-white group-hover:text-blue-500' }}"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+                            <line x1="16" y1="2" x2="16" y2="6" />
+                            <line x1="8" y1="2" x2="8" y2="6" />
+                            <line x1="3" y1="10" x2="21" y2="10" />
+                        </svg>
+                        <span>Jadwal Kuliah</span>
+                    </a>
+
+                    <a
+                        href="{{ route('jadwal.create') }}"
+                        class="group flex items-center space-x-2 px-4 py-2 rounded
+                            {{ request()->routeIs('jadwal.create') ? 'bg-white text-black' : 'hover:opacity-80 text-white' }}"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5 transition-colors duration-200
+                                {{ request()->routeIs('jadwal.create') ? 'text-black' : 'text-white group-hover:text-blue-500' }}"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg>
+                        <span>Tambah Jadwal</span>
+                    </a>
+                @endif
             </nav>
+
         </aside>
 
 

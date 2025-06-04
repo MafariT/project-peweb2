@@ -18,7 +18,7 @@
     </div>
 
     <div>
-        <label class="block text-sm mb-1" for="role">Peran</label>
+        <label class="block text-sm mb-1" for="role">Role</label>
         <select id="role" name="role" class="w-full rounded border border-gray-700 p-2" required>
             <option value="default" {{ (old('role', $user->role ?? '') === 'default') ? 'selected' : '' }}>Default</option>
             <option value="admin" {{ (old('role', $user->role ?? '') === 'admin') ? 'selected' : '' }}>Admin</option>

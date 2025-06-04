@@ -1,4 +1,4 @@
-<x-sidebar-admin-layout>
+<x-sidebar-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Kelola Pengguna') }}
@@ -17,6 +17,22 @@
             <a href="{{ route('admin.manage-users.create') }}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
                 Tambah Pengguna
             </a>
+
+            <form method="GET" action="{{ route('admin.manage-users.index') }}" class="flex items-center space-x-2">
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ request('search') }}"
+                    placeholder="Cari pengguna..."
+                    class="px-4 py-2 rounded border border-gray-600 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                <button
+                    type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
+                >
+                    Cari
+                </button>
+            </form>
         </div>
 
         <div class="overflow-x-auto mt-6 rounded-xl shadow-lg border border-gray-700">
@@ -26,7 +42,7 @@
                         <th class="px-4 py-3 font-semibold">Nama</th>
                         <th class="px-4 py-3 font-semibold">Email</th>
                         <th class="px-4 py-3 font-semibold">Username</th>
-                        <th class="px-4 py-3 font-semibold">Peran</th>
+                        <th class="px-4 py-3 font-semibold">Role</th>
                         <th class="px-4 py-3 font-semibold">Aksi</th>
                     </tr>
                 </thead>
@@ -56,8 +72,8 @@
             </table>
         </div>
 
-        <div class="mt-4">
+        <div class="mt-6">
             {{ $users->links() }}
         </div>
     </div>
-</x-sidebar-admin-layout>
+</x-sidebar-layout>

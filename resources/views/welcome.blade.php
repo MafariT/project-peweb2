@@ -15,7 +15,9 @@
         </div>
         <nav class="space-x-4">
             @auth
-                <a href="{{ route('dashboard') }}" class="text-white hover:text-teal-400 transition">Dashboard</a>
+                <a href="{{ auth()->user()->role === 'admin' ? route('admin.dashboard') : route('dashboard') }}" class="text-white hover:text-teal-400 transition">
+                    Dashboard
+                </a>
                 <a href="{{ route('profile.edit') }}" class="text-white hover:text-teal-400 transition">Profile</a>
                 <form method="POST" action="{{ route('logout') }}" class="inline">
                     @csrf
