@@ -1,0 +1,14 @@
+{
+    "This is a secure area of the application. Please confirm your password before continuing.": "Ini adalah area aman dari aplikasi. Harap konfirmasi kata sandi Anda sebelum melanjutkan.",
+    "Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.": "Lupa kata sandi Anda? Tidak masalah. Cukup beri tahu kami alamat email Anda dan kami akan mengirimkan tautan untuk mengatur ulang kata sandi agar Anda dapat memilih yang baru.",
+    "Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.": "Terima kasih telah mendaftar! Sebelum memulai, harap verifikasi alamat email Anda dengan mengklik tautan yang baru saja kami kirimkan. Jika Anda belum menerima email tersebut, kami dengan senang hati akan mengirimkannya kembali.",
+    "A new verification link has been sent to the email address you provided during registration.": "Tautan verifikasi baru telah dikirim ke alamat email yang Anda gunakan saat mendaftar.",
+    "Password": "Kata Sandi",
+    "Confirm": "Konfirmasi",
+    "Email": "Email",
+    "Email Password Reset Link": "Kirim Tautan Reset Kata Sandi",
+    "Confirm Password": "Konfirmasi Kata Sandi",
+    "Reset Password": "Atur Ulang Kata Sandi",
+    "Resend Verification Email": "Kirim Ulang Email Verifikasi"
+}
+
