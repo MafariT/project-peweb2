@@ -28,7 +28,7 @@
     </style>
 </head>
 <body
-    class="font-sans antialiased bg-gray-100"
+    class="font-sans antialiased bg-gray-100 bg-[url('/public/cubes.png')]"
     x-data="{ sidebarOpen: window.innerWidth >= 768 }"
     x-init="
       window.addEventListener('resize', () => {
@@ -112,7 +112,7 @@
 
                 <div x-show="open" x-transition class="ml-6 space-y-2 text-sm">
                     <a href="{{ route('profile.edit') }}" class="block hover:text-gray-300"
-                        >Profile</a
+                        >Profil</a
                     >
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf

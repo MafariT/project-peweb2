@@ -13,7 +13,7 @@
                 autofocus
                 autocomplete="name"
                 placeholder="Nama"
-                class="w-full bg-gray-100 border border-transparent rounded px-4 py-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-600 mt-1"
+                class="w-full bg-gray-100 border rounded px-4 py-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-600 mt-1"
             />
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
@@ -28,7 +28,7 @@
                 required
                 autocomplete="username"
                 placeholder="Email"
-                class="w-full bg-gray-100 border border-transparent rounded px-4 py-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-600 mt-1"
+                class="w-full bg-gray-100 border rounded px-4 py-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-600 mt-1"
             />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
@@ -43,7 +43,7 @@
                 required
                 autocomplete="username"
                 placeholder="Username"
-                class="w-full bg-gray-100 border border-transparent rounded px-4 py-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-600 mt-1"
+                class="w-full bg-gray-100 border rounded px-4 py-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-600 mt-1"
             />
             <x-input-error :messages="$errors->get('username')" class="mt-2" />
         </div>
@@ -57,7 +57,7 @@
                 required
                 autocomplete="new-password"
                 placeholder="Password"
-                class="w-full bg-gray-100 border border-transparent rounded px-4 py-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-600 mt-1"
+                class="w-full bg-gray-100 border rounded px-4 py-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-600 mt-1"
             />
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
@@ -71,7 +71,7 @@
                 required
                 autocomplete="new-password"
                 placeholder="Konfirmasi Password"
-                class="w-full bg-gray-100 border border-transparent rounded px-4 py-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-600 mt-1"
+                class="w-full bg-gray-100 border rounded px-4 py-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-600 mt-1"
             />
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>

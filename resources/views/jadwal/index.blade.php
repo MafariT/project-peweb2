@@ -6,10 +6,6 @@
     </x-slot>
 
     <style>
-        .jadwal-cell {
-            @apply bg-gradient-to-br from-blue-100 to-blue-50 text-blue-900 rounded-md shadow-sm p-2 text-sm flex flex-col justify-between h-full;
-        }
-
         thead th { position: sticky; top: 0; z-index: 10; }
         tbody td:first-child { position: sticky; left: 0; background-color: #fff; z-index: 5; }
         tbody tr:hover td { background-color: #e0f2fe; }
@@ -106,7 +102,7 @@
                                                 $skipSlots[$day][] = $hourIndex + $i;
                                             }
                                         @endphp
-                                        <td rowspan="{{ $span }}" class="border border-blue-300 align-top h-[72px] jadwal-cell">
+                                        <td rowspan="{{ $span }}" class="border bg-blue-100 border-blue-300 align-top h-[72px]">
                                             <div class="font-semibold truncate">{{ $jadwalAtSlot->mata_kuliah }}</div>
                                             <div class="text-xs italic text-blue-800 truncate">{{ $jadwalAtSlot->dosen }}</div>
                                             <div class="text-xs text-blue-700 truncate">{{ $jadwalAtSlot->ruangan }}</div>

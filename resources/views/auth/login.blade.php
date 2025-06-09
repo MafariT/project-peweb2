@@ -17,7 +17,7 @@
                 autofocus
                 placeholder="Username"
                 autocomplete="username"
-                class="w-full bg-gray-100 border border-transparent rounded px-4 py-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-600"
+                class="w-full bg-gray-100 border rounded px-4 py-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-600"
             />
             <x-input-error :messages="$errors->get('username')" class="mt-2" />
         </div>
@@ -32,7 +32,7 @@
                 required
                 placeholder="Password"
                 autocomplete="current-password"
-                class="w-full bg-gray-100 border border-transparent rounded px-4 py-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-600"
+                class="w-full bg-gray-100 border rounded px-4 py-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-600"
             />
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>

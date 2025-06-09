@@ -14,9 +14,9 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen antialiased">
+<body class="min-h-screen bg-gradient-to-br from-[#1f3d55] to-[#0f1d2b] text-white font-sans antialiased">
     <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
-        <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg outline outline-gray-500 outline-2">
+        <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-gray-100 bg-[url('/public/cubes.png')] shadow-md overflow-hidden sm:rounded-lg outline outline-gray-500 outline-2">
             <!-- Logo inside container, centered and with margin-bottom -->
             <div class="flex justify-center mb-6">
                 <a href="/">
