@@ -56,68 +56,41 @@ class JadwalController extends Controller
     public function index(Request $request)
     {
         $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+
         $jadwals = Auth::check()
             ? Jadwal::where('user_id', Auth::id())->get()
             : collect();
-
 
         $filterHari = $request->input('hari');
         $filterDosen = $request->input('dosen');
         $filterMataKuliah = $request->input('mata_kuliah');
 
-        // Filter jadwals based on request input
         $filteredJadwals = $jadwals->filter(function ($jadwal) use ($filterHari, $filterDosen, $filterMataKuliah) {
             return (!$filterHari || $jadwal->hari === $filterHari)
                 && (!$filterDosen || $jadwal->dosen === $filterDosen)
                 && (!$filterMataKuliah || $jadwal->mata_kuliah === $filterMataKuliah);
         });
 
-        // Extract unique dosen and mata kuliah lists for filters
         $dosenList = $jadwals->pluck('dosen')->unique()->filter()->values();
         $mataKuliahList = $jadwals->pluck('mata_kuliah')->unique()->filter()->values();
 
-        // Time helpers
-        $intervalMinutes = 15;
+        $dayMap = [
+            'Senin' => 'Monday',
+            'Selasa' => 'Tuesday',
+            'Rabu' => 'Wednesday',
+            'Kamis' => 'Thursday',
+            'Jumat' => 'Friday',
+        ];
 
-        // Compute schedule time range
-        $earliestStart = $filteredJadwals->min('jam_mulai');
-        $latestEnd = $filteredJadwals->max('jam_selesai');
-
-        if (!$earliestStart || !$latestEnd) {
-            // No schedules available, default times
-            $earliestStart = '07:00:00';
-            $latestEnd = '17:00:00';
-        }
-
-        $startTimestamp = strtotime(date('H:00:00', strtotime($earliestStart)));
-        $endHour = (int) date('H', strtotime($latestEnd));
-        if ((int) date('i', strtotime($latestEnd)) > 0) {
-            $endHour++;
-        }
-        $endTimestamp = strtotime(sprintf('%02d:00:00', $endHour));
-
-        // Generate time slots (every 15 minutes)
-        $timeSlots = [];
-        for ($time = $startTimestamp; $time <= $endTimestamp; $time += $intervalMinutes * 60) {
-            $timeSlots[] = date('H:i:s', $time);
-        }
-
-        // Only whole hour slots for table rows
-        $wholeHourSlots = array_values(array_filter($timeSlots, fn($t) => substr($t, 3, 2) === '00'));
-
-        // Helper functions
-        $timeToMinutes = function ($time) {
-            [$h, $m] = explode(':', $time);
-            return (int)$h * 60 + (int)$m;
-        };
-
-        $slotSpan = function ($start, $end, $interval = 10) use ($timeToMinutes) {
-            return max(1, intval(round(($timeToMinutes($end) - $timeToMinutes($start)) / $interval)));
-        };
-
-        $roundDownToHour = function ($time) {
-            return date('H:00:00', strtotime($time));
-        };
+        $calendarEvents = $filteredJadwals->map(function ($j) use ($dayMap) {
+            $date = \Carbon\Carbon::parse("this week {$dayMap[$j->hari]}")->format('Y-m-d');
+            return [
+                'title' => "{$j->mata_kuliah} ({$j->ruangan})",
+                'start' => "{$date}T{$j->jam_mulai}",
+                'end' => "{$date}T{$j->jam_selesai}",
+                'extendedProps' => ['dosen' => $j->dosen],
+            ];
+        })->values();
 
         return view('jadwal.index', compact(
             'days',
@@ -126,13 +99,10 @@ class JadwalController extends Controller
             'filterHari',
             'filterDosen',
             'filterMataKuliah',
-            'filteredJadwals',
-            'wholeHourSlots',
-            'slotSpan',
-            'roundDownToHour',
-            'intervalMinutes'
+            'calendarEvents'
         ));
     }
+
 
     public function create()
     {

@@ -26,6 +26,7 @@
         overflow-x: hidden;
       }
     </style>
+    @stack('styles')
 </head>
 <body
     class="font-sans antialiased bg-gray-100 bg-[url('/public/cubes.png')]"
@@ -272,5 +273,6 @@
             <main class="flex-1">{{ $slot }}</main>
         </div>
     </div>
+    @stack('scripts')
 </body>
 </html>

@@ -5,17 +5,6 @@
         </h2>
     </x-slot>
 
-    <style>
-        thead th { position: sticky; top: 0; z-index: 10; }
-        tbody td:first-child { position: sticky; left: 0; background-color: #fff; z-index: 5; }
-        tbody tr:hover td { background-color: #e0f2fe; }
-        .schedule-container { overflow-x: auto; }
-
-        @media (max-width: 640px) {
-            td, th { font-size: 0.75rem; padding: 0.25rem; }
-        }
-    </style>
-
     <div class="py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Filters -->
@@ -48,77 +37,155 @@
                     </select>
                 </div>
                 <div class="sm:col-span-3 flex justify-end gap-3 items-end mt-2">
-                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Filter
-                    </button>
-                    <a href="{{ route('jadwal.index') }}" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">
-                        Reset
-                    </a>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Filter</button>
+                    <a href="{{ route('jadwal.index') }}" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Reset</a>
                 </div>
             </form>
 
-            <!-- Schedule Table -->
-            <div class="schedule-container rounded-lg border border-gray-300 shadow-sm">
-                <table class="min-w-full table-fixed border-collapse border border-gray-300">
-                    <thead class="bg-blue-600 text-white">
-                        <tr>
-                            <th class="w-20 sm:w-24 border border-blue-700 px-2 sm:px-3 py-2 text-center text-xs sm:text-sm font-semibold uppercase tracking-wide">
-                                Waktu / Hari
-                            </th>
-                            @foreach ($days as $day)
-                                <th class="w-28 sm:w-40 border border-blue-700 px-2 sm:px-3 py-2 text-center text-xs sm:text-sm font-semibold uppercase tracking-wide">
-                                    {{ $day }}
-                                </th>
-                            @endforeach
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @php
-                            $skipSlots = [];
-                            foreach ($days as $day) {
-                                $skipSlots[$day] = [];
-                            }
-                        @endphp
-
-                        @foreach ($wholeHourSlots as $hourIndex => $slot)
-                            <tr>
-                                <td class="sticky left-0 bg-white border-r border-gray-300 px-2 py-2 text-xs font-mono font-semibold text-gray-700">
-                                    {{ substr($slot, 0, 5) }}
-                                </td>
-
-                                @foreach ($days as $day)
-                                    @if (in_array($hourIndex, $skipSlots[$day], true))
-                                        @continue
-                                    @endif
-
-                                    @php
-                                        $jadwalAtSlot = $filteredJadwals->first(fn($j) => $j->hari === $day && $roundDownToHour($j->jam_mulai) === $slot);
-                                    @endphp
-
-                                    @if ($jadwalAtSlot)
-                                        @php
-                                            $span = max(1, ceil($slotSpan($jadwalAtSlot->jam_mulai, $jadwalAtSlot->jam_selesai) * $intervalMinutes / 60));
-                                            for ($i = 1; $i < $span; $i++) {
-                                                $skipSlots[$day][] = $hourIndex + $i;
-                                            }
-                                        @endphp
-                                        <td rowspan="{{ $span }}" class="border bg-blue-100 border-blue-300 align-top h-[72px]">
-                                            <div class="font-semibold truncate">{{ $jadwalAtSlot->mata_kuliah }}</div>
-                                            <div class="text-xs italic text-blue-800 truncate">{{ $jadwalAtSlot->dosen }}</div>
-                                            <div class="text-xs text-blue-700 truncate">{{ $jadwalAtSlot->ruangan }}</div>
-                                            <div class="text-xs text-blue-600 mt-1 font-mono whitespace-nowrap">
-                                                {{ substr($jadwalAtSlot->jam_mulai, 0, 5) }} - {{ substr($jadwalAtSlot->jam_selesai, 0, 5) }}
-                                            </div>
-                                        </td>
-                                    @else
-                                        <td class="border border-gray-300 px-1 h-[72px] bg-white"></td>
-                                    @endif
-                                @endforeach
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+            <!-- FullCalendar -->
+            <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+                <div id="calendar" class="p-2 sm:p-4"></div>
             </div>
         </div>
     </div>
+
+    @push('styles')
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+    <style>
+        .fc {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+        }
+
+        .fc-theme-standard .fc-scrollgrid {
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
+        .fc-scrollgrid,
+        .fc-timegrid-slot,
+        .fc-timegrid-axis,
+        .fc-col-header-cell {
+            border-color: #e5e7eb !important;
+        }
+
+        .fc-col-header-cell {
+            background-color: #f9fafb;
+            font-weight: 600;
+            color: #374151; /* gray-700 */
+            padding: 0.5rem;
+        }
+
+        .fc-timegrid-slot-label {
+            color: #6b7280; /* gray-500 */
+        }
+
+        .fc-timegrid-event {
+            border: none;
+            border-radius: 0.5rem;
+            padding: 2px 4px;
+            font-weight: 500;
+        }
+
+        .fc-event-title {
+            padding: 0.125rem 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .fc-toolbar-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937; /* gray-800 */
+        }
+
+        .fc-button {
+            background-color: #3b82f6 !important; /* blue-500 */
+            border: none !important;
+
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .fc-button:hover {
+            background-color: #2563eb !important; /* blue-600 */
+        }
+
+        .fc-button-primary:not(:disabled).fc-button-active,
+        .fc-button-primary:not(:disabled):active {
+            background-color: #1d4ed8 !important; /* blue-700 */
+        }
+
+        .fc-col-header-cell {
+            background-color: #3b82f6 !important; /* blue-500 */
+            color: #fff !important;
+            font-weight: 600;
+        }
+
+        .fc-theme-standard td,
+        .fc-theme-standard th {
+            border-color: #93c5fd !important;
+            border-left: 1px solid #93c5fd !important;
+        }
+
+        .fc-timegrid-slot,
+        .fc-timegrid-axis,
+        .fc-timegrid-slots tr,
+        .fc-scrollgrid-section-body table {
+            border-color: #93c5fd !important;
+        }
+    </style>
+    @endpush
+
+
+    @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+                    themeSystem: true,
+                    initialView: 'timeGridWeek',
+                    allDaySlot: false,
+                    slotMinTime: '07:00:00',
+                    slotMaxTime: '19:00:00',
+                    slotDuration: '00:30:00',
+                    dayHeaderFormat: { weekday: 'long' },
+                    hiddenDays: [0, 6],
+                    height: 'auto',
+                    expandRows: true,
+                    locale: 'id',
+                    nowIndicator: true,
+                    firstDay: 1,
+                    eventColor: '#3b82f6',
+                    eventTimeFormat: {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    },
+                        buttonText: {
+                        today: 'Hari Ini',
+                        week: 'Mingguan',
+                        day: 'Harian'
+                    },
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'timeGridWeek,timeGridDay'
+                    },
+                    events: @json($calendarEvents),
+
+                    eventDidMount: function(info) {
+                        const dosen = info.event.extendedProps.dosen;
+                        if (dosen) {
+                            const dosenEl = document.createElement('div');
+                            dosenEl.innerHTML = `<small style=""";">${dosen}</small>`;
+                            info.el.querySelector('.fc-event-title')?.appendChild(dosenEl);
+                        }
+                    }
+                });
+
+                calendar.render();
+            });
+        </script>
+    @endpush
+
 </x-sidebar-layout>
